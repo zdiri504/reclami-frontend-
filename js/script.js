@@ -76,26 +76,36 @@ function updateNavVisibility() {
   const hideForClient = ['admin.html'];
   const navLinks = document.querySelectorAll('nav a');
   if (!navLinks.length) return;
+  // Reset visibility
+  navLinks.forEach(a => { a.parentElement.style.display = ''; });
 
-  navLinks.forEach(a => {
-    a.parentElement.style.display = '';
-  });
+  // If session user is not present, try to build minimal user from localStorage
+  if (!currentUser) {
+    const token = localStorage.getItem('auth_token');
+    const role = localStorage.getItem('user_role');
+    const name = localStorage.getItem('user_name');
+    if (token) {
+      currentUser = { name: name || 'Utilisateur', role: role || 'client', token };
+    }
+  }
 
-  if (!currentUser) return; // Show everything by default for guests
+  // Prefer centralized navigation control if available
+  if (typeof window.updateNavigationVisibility === 'function') {
+    try { window.updateNavigationVisibility(); } catch (e) { /* ignore */ }
+    return;
+  }
+
+  if (!currentUser) return; // still guest
 
   if (currentUser.role === 'admin') {
     navLinks.forEach(a => {
       const href = (a.getAttribute('href') || '').toLowerCase();
-      if (hideForAdmin.some(x => href.endsWith(x))) {
-        a.parentElement.style.display = 'none';
-      }
+      if (hideForAdmin.some(x => href.endsWith(x))) a.parentElement.style.display = 'none';
     });
   } else {
     navLinks.forEach(a => {
       const href = (a.getAttribute('href') || '').toLowerCase();
-      if (hideForClient.some(x => href.endsWith(x))) {
-        a.parentElement.style.display = 'none';
-      }
+      if (hideForClient.some(x => href.endsWith(x))) a.parentElement.style.display = 'none';
     });
   }
 }
@@ -139,7 +149,11 @@ function setupNavigation() {
           localStorage.removeItem('auth_token');
           localStorage.removeItem('user_name');
           localStorage.removeItem('user_role');
-          window.location.href = 'index.html';
+          // Immediately update navigation visibility in this tab
+          if (typeof window.updateNavigationVisibility === 'function') updateNavigationVisibility();
+          try { updateNavVisibility(); } catch(e) {}
+          // Redirect to login page so only the login screen is shown
+          window.location.href = 'login.html';
         } else {
           alert("Erreur lors de la déconnexion");
         }
@@ -151,7 +165,9 @@ function setupNavigation() {
         localStorage.removeItem('auth_token');
         localStorage.removeItem('user_name');
         localStorage.removeItem('user_role');
-        window.location.href = 'index.html';
+        if (typeof window.updateNavigationVisibility === 'function') updateNavigationVisibility();
+        try { updateNavVisibility(); } catch(e) {}
+        window.location.href = 'login.html';
       });
     });
   }
@@ -318,6 +334,11 @@ function authenticateUser(email, password) {
         token: data.token
       });
       
+      // Redirection basée sur le rôle
+      // Update navigation immediately
+      if (typeof window.updateNavigationVisibility === 'function') updateNavigationVisibility();
+      updateNavVisibility();
+
       // Redirection basée sur le rôle
       if (data.user.role === 'admin') {
         window.location.href = 'admin.html';
