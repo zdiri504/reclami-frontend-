@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Validation - Types de Réclamation</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+        .success { color: green; }
+        .error { color: red; }
+        select, input, textarea { margin: 10px 0; padding: 5px; width: 300px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Test de Validation des Types de Réclamation</h1>
+    
+    <div class="test-section">
+        <h2>Test du Select</h2>
+        <label for="complaint-type">Type de Réclamation:</label>
+        <select id="complaint-type" name="type" required>
+            <option value="">Sélectionnez un type</option>
+            <option value="Internet">Internet</option>
+            <option value="Téléphonie">Téléphonie</option>
+            <option value="TV">TV</option>
+            <option value="Facturation">Facturation</option>
+            <option value="Autre">Autre</option>
+        </select>
+        
+        <br>
+        <button onclick="testValidation()">Tester la Validation</button>
+        <button onclick="testAllValues()">Tester Toutes les Valeurs</button>
+        
+        <div id="test-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test du Formulaire Complet</h2>
+        <form id="test-form">
+            <div>
+                <label for="test-type">Type:</label>
+                <select id="test-type" required>
+                    <option value="">Sélectionnez un type</option>
+                    <option value="Internet">Internet</option>
+                    <option value="Téléphonie">Téléphonie</option>
+                    <option value="TV">TV</option>
+                    <option value="Facturation">Facturation</option>
+                    <option value="Autre">Autre</option>
+                </select>
+            </div>
+            <div>
+                <label for="test-subject">Sujet:</label>
+                <input type="text" id="test-subject" required>
+            </div>
+            <div>
+                <label for="test-description">Description:</label>
+                <textarea id="test-description" required></textarea>
+            </div>
+            <div>
+                <label for="test-contact">Contact:</label>
+                <input type="text" id="test-contact" required>
+            </div>
+            <button type="submit">Tester le Formulaire</button>
+        </form>
+        <div id="form-results"></div>
+    </div>
+
+    <script>
+        // Test function for validation
+        function testValidation() {
+            const select = document.getElementById('complaint-type');
+            const value = select.value;
+            const results = document.getElementById('test-results');
+            
+            const validTypes = ['Internet', 'Téléphonie', 'TV', 'Facturation', 'Autre'];
+            const isValid = validTypes.includes(value);
+            
+            results.innerHTML = `
+                <h3>Résultats du Test:</h3>
+                <p><strong>Valeur sélectionnée:</strong> "${value}"</p>
+                <p><strong>Longueur:</strong> ${value.length}</p>
+                <p><strong>Codes de caractères:</strong> ${Array.from(value).map(c => c.charCodeAt(0)).join(', ')}</p>
+                <p><strong>Est valide:</strong> <span class="${isValid ? 'success' : 'error'}">${isValid ? 'OUI' : 'NON'}</span></p>
+                <p><strong>Types valides:</strong> ${validTypes.join(', ')}</p>
+            `;
+        }
+        
+        // Test all values
+        function testAllValues() {
+            const select = document.getElementById('complaint-type');
+            const results = document.getElementById('test-results');
+            const validTypes = ['Internet', 'Téléphonie', 'TV', 'Facturation', 'Autre'];
+            
+            let html = '<h3>Test de Toutes les Valeurs:</h3>';
+            
+            Array.from(select.options).forEach((option, index) => {
+                if (option.value) {
+                    const isValid = validTypes.includes(option.value);
+                    html += `
+                        <p><strong>Option ${index}:</strong> "${option.value}" 
+                        <span class="${isValid ? 'success' : 'error'}">${isValid ? '✓' : '✗'}</span></p>
+                    `;
+                }
+            });
+            
+            results.innerHTML = html;
+        }
+        
+        // Test form submission
+        document.getElementById('test-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                type: document.getElementById('test-type').value,
+                subject: document.getElementById('test-subject').value.trim(),
+                description: document.getElementById('test-description').value.trim(),
+                contact_info: document.getElementById('test-contact').value.trim()
+            };
+            
+            const validTypes = ['Internet', 'Téléphonie', 'TV', 'Facturation', 'Autre'];
+            const typeValid = validTypes.includes(formData.type);
+            
+            const results = document.getElementById('form-results');
+            results.innerHTML = `
+                <h3>Résultats du Formulaire:</h3>
+                <p><strong>Type:</strong> "${formData.type}" <span class="${typeValid ? 'success' : 'error'}">${typeValid ? '✓' : '✗'}</span></p>
+                <p><strong>Sujet:</strong> "${formData.subject}" ${formData.subject.length > 255 ? '<span class="error">✗ Trop long</span>' : '<span class="success">✓</span>'}</p>
+                <p><strong>Description:</strong> "${formData.description}" ${formData.description ? '<span class="success">✓</span>' : '<span class="error">✗ Manquant</span>'}</p>
+                <p><strong>Contact:</strong> "${formData.contact_info}" ${formData.contact_info ? '<span class="success">✓</span>' : '<span class="error">✗ Manquant</span>'}</p>
+            `;
+        });
+        
+        // Auto-test on page load
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                testAllValues();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

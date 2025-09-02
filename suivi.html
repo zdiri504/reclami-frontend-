@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Suivi de Réclamation - Tunisie Télécom</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <img src="images/logo.png" alt="Réclamation Telecom">
+                <h1>Réclamation Telecom</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
+                    <li><a href="correction.html"><i class="fas fa-edit"></i> Réclamation</a></li>
+                    <li><a href="suivi.html" class="active"><i class="fas fa-search"></i> Suivi</a></li>
+                    <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+                    <li><a href="apropos.html"><i class="fas fa-info-circle"></i> À propos</a></li>
+                    <li><a href="admin.html"><i class="fas fa-cog"></i> Admin</a></li>
+                </ul>
+            </nav>
+            <div class="user-actions">
+                <a href="login.html" id="login-btn" class="btn btn-outline"><i class="fas fa-sign-in-alt"></i> Connexion</a>
+                <a href="#" id="logout-btn" class="btn btn-outline" style="display:none;"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+                <div id="user-nav" style="display:none;">
+                    <span id="user-name"></span>
+                </div>
+            </div>
+            <div class="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+    
+    <section class="tracking-hero">
+        <div class="container tracking-hero-content">
+            <h1>Suivi de Réclamation</h1>
+            <p>Vérifiez l'état de votre réclamation en temps réel. Entrez simplement votre numéro de référence pour suivre l'avancement du traitement.</p>
+        </div>
+    </section>
+
+    <section class="tracking-section">
+        <div class="container">
+            <div class="tracking-container">
+                <div class="tracking-form">
+                    <h2>Suivre votre réclamation</h2>
+                    <form id="tracking-form">
+                        <div class="form-group">
+                            <label for="tracking-number">Numéro de référence</label>
+                            <input type="text" id="tracking-number" name="tracking-number" placeholder="Ex: TT-1001" required />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Vérifier le statut</button>
+                    </form>
+                </div>
+                
+                <div class="tracking-info">
+                    <h2>Informations importantes</h2>
+                    <div class="info-box">
+                        <h3><i class="fas fa-info-circle"></i> À propos du suivi</h3>
+                        <p>Votre numéro de référence a été envoyé par email lors de la soumission de votre réclamation. Si vous ne l'avez pas reçu, veuillez vérifier votre dossier spam ou nous contacter.</p>
+                    </div>
+                    
+                    <div class="info-box">
+                        <h3><i class="fas fa-history"></i> Délais de traitement</h3>
+                        <p>Les réclamations sont traitées dans un délai moyen de 3 à 7 jours ouvrables. Les cas complexes peuvent nécessiter jusqu'à 15 jours.</p>
+                    </div>
+                    
+                    <div class="info-box">
+                        <h3><i class="fas fa-headset"></i> Assistance supplémentaire</h3>
+                        <p>Si vous avez besoin d'une assistance immédiate, contactez notre service client au 78 224 533 ou par email à contact@tunisietelecom.tn</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Résultat du suivi dynamique -->
+            <div id="tracking-result" class="status-container" style="display: none;">
+                <div class="status-header">
+                    <h2>Statut de votre réclamation</h2>
+                    <p>Référence: <strong id="result-reference"></strong></p>
+                </div>
+                
+                <div class="status-timeline" id="status-timeline">
+                    <!-- Timeline dynamique généré par JavaScript -->
+                </div>
+                
+                <div class="complaint-details" id="complaint-details">
+                    <!-- Détails dynamiques générés par JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Message d'erreur -->
+            <div id="tracking-error" class="error-message" style="display: none;">
+                <i class="fas fa-exclamation-circle"></i>
+                <h3>Réclamation non trouvée</h3>
+                <p id="error-text">Vérifiez votre numéro de référence et réessayez.</p>
+            </div>
+            
+            <!-- Historique du traitement -->
+            <div id="history-section" class="history-section" style="display: none;">
+                <h2>Historique du traitement</h2>
+                <div id="history-items">
+                    <!-- Historique dynamique généré par JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+     
+
+
+
+
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-col">
+                    <h3>À propos de nous</h3>
+                    <p>Tunisie Telecom, leader des télécommunications, s'engage à fournir des services de qualité supérieure et un support client exceptionnel.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Liens Rapides</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Accueil</a></li>
+                        <li><a href="correction.html">Réclamation</a></li>
+                        <li><a href="suivi.html">Suivi</a></li>
+                        <li><a href="apropos.html">À propos</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact</h3>
+                    <ul class="footer-contact">
+                        <li><i class="fas fa-phone"></i> 78 224 533</li>
+                        <li><i class="fas fa-envelope"></i> contact@tunisietelecom.tn</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Tunis, Tunisie</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Tunisie Telecom. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script src="js/tracking.js"></script>
+</body>
+</html>

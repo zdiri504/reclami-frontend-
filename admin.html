@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Admin - Tunisie Télécom</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/navigation.js"></script>
+    <style>
+        .complaint-details {
+            display: none;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .complaint-details.show {
+            display: block;
+        }
+        
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        .complaint-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .info-group {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        
+        .info-group h4 {
+            margin: 0 0 10px 0;
+            color: #495057;
+        }
+        
+        .responses-section {
+            margin-top: 20px;
+        }
+        
+        .response-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .response-meta {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-bottom: 8px;
+        }
+        
+        .status-history {
+            margin-top: 20px;
+        }
+        
+        .history-item {
+            background: #e9ecef;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <img src="images/logo.png" alt="Réclamation Telecom">
+                <h1>Réclamation Telecom</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
+                    <li id="correction-nav-item"><a href="correction.html"><i class="fas fa-edit"></i> correction</a></li>
+                    <li id="suivi-nav-item"><a href="suivi.html"><i class="fas fa-search"></i> Suivi</a></li>
+                    <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+                    <li><a href="apropos.html"><i class="fas fa-info-circle"></i> À propos</a></li>
+                    <li id="admin-nav-item" style="display: none;"><a href="admin.html" class="active"><i class="fas fa-cog"></i> Admin</a></li>
+                </ul>
+            </nav>
+            <div class="user-actions">
+                <a href="login.html" id="login-btn" class="btn btn-outline"><i class="fas fa-sign-in-alt"></i> Connexion</a>
+                <a href="#" id="logout-btn" class="btn btn-outline" style="display:none;"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+                <div id="user-nav" style="display:none;">
+                    <span id="user-name"></span>
+                </div>
+            </div>
+            <div class="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay">
+        <button class="mobile-close" id="mobileClose">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="mobile-nav-content">
+            <ul>
+                <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
+                <li id="mobile-correction-nav-item"><a href="correction.html"><i class="fas fa-edit"></i> Correction</a></li>
+                <li id="mobile-suivi-nav-item"><a href="suivi.html"><i class="fas fa-search"></i> Suivi</a></li>
+                <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li><a href="apropos.html"><i class="fas fa-info-circle"></i> À propos</a></li>
+                <li id="mobile-admin-nav-item" style="display: none;"><a href="admin.html" class="active"><i class="fas fa-cog"></i> Admin</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Admin Container -->
+    <div class="admin-container">
+        <main class="admin-main" style="width:100%">
+            <div class="admin-section">
+                <div class="admin-header">
+                    <div class="admin-title">Gestion des Réclamations</div>
+                    <div class="admin-actions">
+                        <div class="search-bar">
+                            <input type="text" id="searchInput" placeholder="Rechercher par référence...">
+                            <button id="searchBtn"><i class="fas fa-search"></i></button>
+                        </div>
+                        <button class="btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> Actualiser</button>
+                    </div>
+                </div>
+                
+
+                
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Statut :</label>
+                        <select id="statusFilter">
+                            <option value="Tous">Tous</option>
+                            <option value="Nouveau">Nouveau</option>
+                            <option value="En cours">En cours</option>
+                            <option value="Résolu">Résolu</option>
+                            <option value="Fermé">Fermé</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Type :</label>
+                        <select id="typeFilter">
+                            <option value="Tous">Tous</option>
+                            <option value="Internet">Internet</option>
+                            <option value="Téléphonie">Téléphonie</option>
+                            <option value="TV">TV</option>
+                            <option value="Facturation">Facturation</option>
+                            <option value="Autre">Autre</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Date :</label>
+                        <select id="dateFilter">
+                            <option value="">Tout</option>
+                            <option value="Derniers 7 jours">Derniers 7 jours</option>
+                            <option value="Dernier mois">Dernier mois</option>
+                            <option value="Dernier trimestre">Dernier trimestre</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Dashboard Stats -->
+                <div class="stats-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 20px 0;">
+                    <div class="stat-card" style="background: #007bff; color: white; padding: 20px; border-radius: 8px; text-align: center;">
+                        <h3 id="totalComplaints">0</h3>
+                        <p>Total Réclamations</p>
+                    </div>
+                    <div class="stat-card" style="background: #ffc107; color: #212529; padding: 20px; border-radius: 8px; text-align: center;">
+                        <h3 id="newComplaints">0</h3>
+                        <p>Nouvelles</p>
+                    </div>
+                    <div class="stat-card" style="background: #17a2b8; color: white; padding: 20px; border-radius: 8px; text-align: center;">
+                        <h3 id="inProgressComplaints">0</h3>
+                        <p>En Cours</p>
+                    </div>
+                    <div class="stat-card" style="background: #28a745; color: white; padding: 20px; border-radius: 8px; text-align: center;">
+                        <h3 id="resolvedComplaints">0</h3>
+                        <p>Résolues</p>
+                    </div>
+                </div>
+                
+                <!-- Complaints List -->
+                <div id="complaintsList">
+                    <table class="complaints-table">
+                        <thead>
+                            <tr>
+                                <th>Référence</th>
+                                <th>Client</th>
+                                <th>Type</th>
+                                <th>Date</th>
+                                <th>Statut</th>
+                                <th>Priorité</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="complaintsTableBody">
+                            <!-- Complaints will be loaded here dynamically -->
+                        </tbody>
+                    </table>
+                    
+                    <div class="pagination" id="pagination">
+                        <!-- Pagination will be generated here -->
+                    </div>
+                </div>
+                
+                <!-- Complaint Details View -->
+                <div id="complaintDetails" class="complaint-details">
+                    <button class="back-btn" id="backToList">
+                        <i class="fas fa-arrow-left"></i> Retour à la liste
+                    </button>
+                    
+                    <div id="complaintInfo">
+                        <!-- Complaint details will be loaded here -->
+                    </div>
+                    
+                    <div class="response-section">
+                        <div class="response-header">
+                            <div class="response-title">Répondre à la Réclamation</div>
+                            <div class="response-actions">
+                                <select class="status-select" id="statusSelect">
+                                    <option value="Nouveau">Nouveau</option>
+                                    <option value="En cours">En cours</option>
+                                    <option value="Résolu">Résolu</option>
+                                    <option value="Fermé">Fermé</option>
+                                </select>
+                                <button class="btn" id="updateStatusBtn">Mettre à jour le statut</button>
+                            </div>
+                        </div>
+                        
+                        <div class="response-content">
+                            <div class="admin-form-group">
+                                <label for="adminResponse">Votre réponse:</label>
+                                <textarea id="adminResponse" placeholder="Écrivez votre réponse à la réclamation ici..."></textarea>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="submit-btn" id="sendResponseBtn">Envoyer la Réponse</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Loading and Error Messages -->
+                <div id="loadingMessage" class="loading" style="display: none;">
+                    <i class="fas fa-spinner fa-spin"></i> Chargement en cours...
+                </div>
+                
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+                <div id="successMessage" class="success-message" style="display: none;"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Response Modal -->
+    <div id="responseModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Répondre à la Réclamation</h2>
+            <div class="admin-form-group">
+                <label for="modalResponse">Votre réponse:</label>
+                <textarea id="modalResponse" placeholder="Écrivez votre réponse ici..."></textarea>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-primary" id="modalSendBtn">Envoyer</button>
+                <button class="btn btn-outline" id="modalCancelBtn">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentComplaints = [];
+        let currentPage = 1;
+        let currentComplaintId = null;
+        const API_BASE_URL = 'http://localhost:8000/api'; // Adjust this to your backend URL
+        
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const isAuthenticated = checkAuth();
+            if (isAuthenticated) {
+                loadDashboardStats();
+                loadComplaints();
+            } else {
+                // Show message for non-authenticated users
+                document.getElementById('complaintsList').innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <h3>Accès Administrateur Requis</h3>
+                        <p>Veuillez vous connecter en tant qu'administrateur pour accéder à cette page.</p>
+                        <a href="login.html" class="btn btn-primary">Se connecter</a>
+                    </div>
+                `;
+                // Hide other admin sections
+                document.querySelector('.filters').style.display = 'none';
+                document.querySelector('.stats-container').style.display = 'none';
+                document.querySelector('.admin-actions').style.display = 'none';
+            }
+            setupEventListeners();
+            updateAdminNavigation();
+        });
+        
+        function checkAuth() {
+            const token = localStorage.getItem('auth_token');
+            const userRole = localStorage.getItem('user_role');
+            return token && userRole === 'admin';
+        }
+        
+        function updateAdminNavigation() {
+            const userRole = localStorage.getItem('user_role');
+            const correctionNavItem = document.getElementById('correction-nav-item');
+            const suiviNavItem = document.getElementById('suivi-nav-item');
+            const mobileCorrectionNavItem = document.getElementById('mobile-correction-nav-item');
+            const mobileSuiviNavItem = document.getElementById('mobile-suivi-nav-item');
+            
+            if (userRole === 'admin') {
+                // Hide correction and suivi links for admin users
+                if (correctionNavItem) correctionNavItem.style.display = 'none';
+                if (suiviNavItem) suiviNavItem.style.display = 'none';
+                if (mobileCorrectionNavItem) mobileCorrectionNavItem.style.display = 'none';
+                if (mobileSuiviNavItem) mobileSuiviNavItem.style.display = 'none';
+            } else {
+                // Show correction and suivi links for non-admin users
+                if (correctionNavItem) correctionNavItem.style.display = 'block';
+                if (suiviNavItem) suiviNavItem.style.display = 'block';
+                if (mobileCorrectionNavItem) mobileCorrectionNavItem.style.display = 'block';
+                if (mobileSuiviNavItem) mobileSuiviNavItem.style.display = 'block';
+            }
+        }
+        
+        function setupEventListeners() {
+            // Filter changes
+            document.getElementById('statusFilter').addEventListener('change', loadComplaints);
+            document.getElementById('typeFilter').addEventListener('change', loadComplaints);
+            document.getElementById('dateFilter').addEventListener('change', loadComplaints);
+            
+            // Search
+            document.getElementById('searchBtn').addEventListener('click', loadComplaints);
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') loadComplaints();
+            });
+            
+            // Refresh
+            document.getElementById('refreshBtn').addEventListener('click', function() {
+                loadDashboardStats();
+                loadComplaints();
+            });
+            
+            // Back to list
+            document.getElementById('backToList').addEventListener('click', showComplaintsList);
+            
+            // Update status
+            document.getElementById('updateStatusBtn').addEventListener('click', updateComplaintStatus);
+            
+            // Send response
+            document.getElementById('sendResponseBtn').addEventListener('click', sendResponse);
+            
+            // Modal events
+            document.getElementById('modalCancelBtn').addEventListener('click', closeModal);
+            document.querySelector('.close').addEventListener('click', closeModal);
+            
+            // Mobile menu events
+            document.querySelector('.mobile-menu').addEventListener('click', toggleMobileMenu);
+            document.getElementById('mobileClose').addEventListener('click', closeMobileMenu);
+            document.getElementById('mobileNavOverlay').addEventListener('click', function(e) {
+                if (e.target === this) closeMobileMenu();
+            });
+            
+            // Logout
+            document.getElementById('logout-btn').addEventListener('click', logout);
+        }
+        
+        async function loadDashboardStats() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/stats`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    // Update stats with actual values from API
+                    document.getElementById('totalComplaints').textContent = data.stats?.total || 0;
+                    document.getElementById('newComplaints').textContent = data.stats?.new || 0;
+                    document.getElementById('inProgressComplaints').textContent = data.stats?.in_progress || 0;
+                    document.getElementById('resolvedComplaints').textContent = data.stats?.resolved || 0;
+                } else {
+                    console.error('Failed to load stats:', response.status);
+                    // Set default values if API fails
+                    document.getElementById('totalComplaints').textContent = '0';
+                    document.getElementById('newComplaints').textContent = '0';
+                    document.getElementById('inProgressComplaints').textContent = '0';
+                    document.getElementById('resolvedComplaints').textContent = '0';
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+                // Set default values if API fails
+                document.getElementById('totalComplaints').textContent = '0';
+                document.getElementById('newComplaints').textContent = '0';
+                document.getElementById('inProgressComplaints').textContent = '0';
+                document.getElementById('resolvedComplaints').textContent = '0';
+            }
+        }
+        
+        async function loadComplaints() {
+            showLoading(true);
+            hideMessages();
+            
+            try {
+                const status = document.getElementById('statusFilter').value;
+                const type = document.getElementById('typeFilter').value;
+                const dateFilter = document.getElementById('dateFilter').value;
+                const search = document.getElementById('searchInput').value;
+                
+                let url = `${API_BASE_URL}/complaints?page=${currentPage}`;
+                
+                if (status !== 'Tous') url += `&status=${encodeURIComponent(status)}`;
+                if (type !== 'Tous') url += `&type=${encodeURIComponent(type)}`;
+                if (dateFilter) url += `&date_filter=${encodeURIComponent(dateFilter)}`;
+                if (search) url += `&reference=${encodeURIComponent(search)}`; // Search by reference
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    currentComplaints = data.complaints?.data || [];
+                    displayComplaints(currentComplaints);
+                    displayPagination(data.complaints || {});
+                } else {
+                    throw new Error('Failed to load complaints');
+                }
+            } catch (error) {
+                console.error('Error loading complaints:', error);
+                showError('Erreur lors du chargement des réclamations');
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        function displayComplaints(complaints) {
+            const tbody = document.getElementById('complaintsTableBody');
+            tbody.innerHTML = '';
+            
+            if (complaints.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;">Aucune réclamation trouvée</td></tr>';
+                return;
+            }
+            
+            complaints.forEach(complaint => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${complaint.reference_id || 'N/A'}</td>
+                    <td>${complaint.user ? complaint.user.name : 'N/A'}</td>
+                    <td>${complaint.type || 'N/A'}</td>
+                    <td>${new Date(complaint.created_at).toLocaleDateString('fr-FR')}</td>
+                    <td><span class="status-badge status-${getStatusClass(complaint.status)}">${complaint.status || 'N/A'}</span></td>
+                    <td><span class="priority ${complaint.priority?.toLowerCase()}">${complaint.priority || 'N/A'}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn respond-btn" title="Répondre" onclick="openResponseModal(${complaint.id})">
+                                <i class="fas fa-reply"></i>
+                            </button>
+                            <button class="btn view-btn" title="Détails" onclick="showComplaintDetails(${complaint.id})">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function getStatusClass(status) {
+            switch(status) {
+                case 'Nouveau': return 'new';
+                case 'En cours': return 'in-progress';
+                case 'Résolu': return 'resolved';
+                case 'Fermé': return 'closed';
+                default: return 'new';
+            }
+        }
+        
+        function displayPagination(paginationData) {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+            
+            if (!paginationData || paginationData.last_page <= 1) return;
+            
+            // Previous button
+            if (paginationData.current_page > 1) {
+                const prevBtn = document.createElement('button');
+                prevBtn.className = 'btn';
+                prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                prevBtn.onclick = () => changePage(paginationData.current_page - 1);
+                pagination.appendChild(prevBtn);
+            }
+            
+            // Page numbers
+            for (let i = 1; i <= paginationData.last_page; i++) {
+                if (i === 1 || i === paginationData.last_page || 
+                    (i >= paginationData.current_page - 2 && i <= paginationData.current_page + 2)) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = `btn ${i === paginationData.current_page ? 'active' : ''}`;
+                    pageBtn.textContent = i;
+                    pageBtn.onclick = () => changePage(i);
+                    pagination.appendChild(pageBtn);
+                } else if (i === paginationData.current_page - 3 || i === paginationData.current_page + 3) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.textContent = '...';
+                    pagination.appendChild(ellipsis);
+                }
+            }
+            
+            // Next button
+            if (paginationData.current_page < paginationData.last_page) {
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'btn';
+                nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                nextBtn.onclick = () => changePage(paginationData.current_page + 1);
+                pagination.appendChild(nextBtn);
+            }
+        }
+        
+        function changePage(page) {
+            currentPage = page;
+            loadComplaints();
+        }
+        
+        async function showComplaintDetails(complaintId) {
+            currentComplaintId = complaintId;
+            showLoading(true);
+            hideMessages();
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/complaints/${complaintId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    displayComplaintDetails(data.complaint);
+                    document.getElementById('complaintsList').style.display = 'none';
+                    document.getElementById('complaintDetails').classList.add('show');
+                } else {
+                    throw new Error('Failed to load complaint details');
+                }
+            } catch (error) {
+                console.error('Error loading complaint details:', error);
+                showError('Erreur lors du chargement des détails');
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        function displayComplaintDetails(complaint) {
+            const complaintInfo = document.getElementById('complaintInfo');
+            
+            complaintInfo.innerHTML = `
+                <h2>Réclamation ${complaint.reference_id || 'N/A'}</h2>
+                
+                <div class="complaint-info">
+                    <div class="info-group">
+                        <h4>Informations Client</h4>
+                        <p><strong>Nom:</strong> ${complaint.user ? complaint.user.name : 'N/A'}</p>
+                        <p><strong>Email:</strong> ${complaint.user ? complaint.user.email : 'N/A'}</p>
+                        <p><strong>Contact:</strong> ${complaint.contact_info || 'N/A'}</p>
+                    </div>
+                    
+                    <div class="info-group">
+                        <h4>Détails Réclamation</h4>
+                        <p><strong>Type:</strong> ${complaint.type || 'N/A'}</p>
+                        <p><strong>Sujet:</strong> ${complaint.subject || 'N/A'}</p>
+                        <p><strong>Statut:</strong> ${complaint.status || 'N/A'}</p>
+                        <p><strong>Priorité:</strong> ${complaint.priority || 'N/A'}</p>
+                        <p><strong>Date:</strong> ${new Date(complaint.created_at).toLocaleDateString('fr-FR')}</p>
+                    </div>
+                </div>
+                
+                <div class="info-group">
+                    <h4>Description</h4>
+                    <p>${complaint.description || 'Aucune description disponible'}</p>
+                </div>
+                
+                <div class="responses-section">
+                    <h4>Réponses (${complaint.responses ? complaint.responses.length : 0})</h4>
+                    ${complaint.responses && complaint.responses.length > 0 ? 
+                        complaint.responses.map(response => `
+                            <div class="response-item">
+                                <div class="response-meta">
+                                    <strong>${response.admin ? response.admin.name : 'Admin'}</strong> - 
+                                    ${new Date(response.created_at).toLocaleDateString('fr-FR')}
+                                </div>
+                                <div>${response.response}</div>
+                            </div>
+                        `).join('') : 
+                        '<p>Aucune réponse pour le moment.</p>'
+                    }
+                </div>
+                
+                <div class="status-history">
+                    <h4>Historique des Statuts</h4>
+                    ${complaint.statusHistory && complaint.statusHistory.length > 0 ? 
+                        complaint.statusHistory.map(history => `
+                            <div class="history-item">
+                                <strong>${history.old_status || 'Création'} → ${history.new_status}</strong><br>
+                                ${history.changedBy ? history.changedBy.name : 'Système'} - 
+                                ${new Date(history.created_at).toLocaleDateString('fr-FR')}
+                                ${history.notes ? `<br><em>${history.notes}</em>` : ''}
+                            </div>
+                        `).join('') : 
+                        '<p>Aucun historique disponible.</p>'
+                    }
+                </div>
+            `;
+            
+            // Set current status in select
+            document.getElementById('statusSelect').value = complaint.status || 'Nouveau';
+        }
+        
+        function showComplaintsList() {
+            document.getElementById('complaintsList').style.display = 'block';
+            document.getElementById('complaintDetails').classList.remove('show');
+            currentComplaintId = null;
+        }
+        
+        async function updateComplaintStatus() {
+            if (!currentComplaintId) return;
+            
+            const newStatus = document.getElementById('statusSelect').value;
+            const notes = document.getElementById('adminResponse').value;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/complaints/${currentComplaintId}/status`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: newStatus,
+                        response: notes || undefined,
+                        notes: notes || undefined
+                    })
+                });
+                
+                if (response.ok) {
+                    showSuccess('Statut mis à jour avec succès');
+                    document.getElementById('adminResponse').value = '';
+                    // Refresh the complaint details
+                    showComplaintDetails(currentComplaintId);
+                    // Refresh the main list
+                    loadComplaints();
+                    loadDashboardStats();
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Erreur lors de la mise à jour');
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+                showError(error.message || 'Erreur lors de la mise à jour du statut');
+            }
+        }
+        
+        async function sendResponse() {
+            if (!currentComplaintId) return;
+            
+            const responseText = document.getElementById('adminResponse').value.trim();
+            if (!responseText) {
+                showError('Veuillez écrire une réponse');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/complaints/${currentComplaintId}/status`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: document.getElementById('statusSelect').value,
+                        response: responseText,
+                        notes: 'Réponse ajoutée'
+                    })
+                });
+                
+                if (response.ok) {
+                    showSuccess('Réponse envoyée avec succès');
+                    document.getElementById('adminResponse').value = '';
+                    // Refresh the complaint details
+                    showComplaintDetails(currentComplaintId);
+                    // Refresh the main list
+                    loadComplaints();
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Erreur lors de l\'envoi');
+                }
+            } catch (error) {
+                console.error('Error sending response:', error);
+                showError(error.message || 'Erreur lors de l\'envoi de la réponse');
+            }
+        }
+        
+        function openResponseModal(complaintId) {
+            currentComplaintId = complaintId;
+            document.getElementById('modalResponse').value = '';
+            document.getElementById('responseModal').style.display = 'block';
+            
+            // Set up modal send button
+            document.getElementById('modalSendBtn').onclick = async function() {
+                const responseText = document.getElementById('modalResponse').value.trim();
+                if (!responseText) {
+                    showError('Veuillez écrire une réponse');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch(`${API_BASE_URL}/complaints/${complaintId}/status`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            status: 'En cours',
+                            response: responseText,
+                            notes: 'Réponse rapide ajoutée'
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        showSuccess('Réponse envoyée avec succès');
+                        closeModal();
+                        loadComplaints();
+                        loadDashboardStats();
+                    } else {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Erreur lors de l\'envoi');
+                    }
+                } catch (error) {
+                    console.error('Error sending response:', error);
+                    showError(error.message || 'Erreur lors de l\'envoi de la réponse');
+                }
+            };
+        }
+        
+        function closeModal() {
+            document.getElementById('responseModal').style.display = 'none';
+        }
+        
+
+        
+        // Utility functions
+        function showLoading(show) {
+            document.getElementById('loadingMessage').style.display = show ? 'block' : 'none';
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => errorDiv.style.display = 'none', 5000);
+        }
+        
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            setTimeout(() => successDiv.style.display = 'none', 5000);
+        }
+        
+        function hideMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+        
+        // Mobile menu functions
+        function toggleMobileMenu() {
+            const overlay = document.getElementById('mobileNavOverlay');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            
+            overlay.classList.toggle('show');
+            mobileMenu.classList.toggle('active');
+            
+            // Prevent body scroll when menu is open
+            if (overlay.classList.contains('show')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+        
+        function closeMobileMenu() {
+            const overlay = document.getElementById('mobileNavOverlay');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            
+            overlay.classList.remove('show');
+            mobileMenu.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('responseModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

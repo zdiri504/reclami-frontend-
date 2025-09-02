@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Navigation - Tunisie Télécom</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/navigation.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <img src="images/logo.png" alt="Réclamation Telecom">
+                <h1>Réclamation Telecom</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
+                    <li><a href="correction.html"><i class="fas fa-edit"></i> correction</a></li>
+                    <li><a href="suivi.html"><i class="fas fa-search"></i> Suivi</a></li>
+                    <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+                    <li><a href="apropos.html"><i class="fas fa-info-circle"></i> À propos</a></li>
+                    <li id="admin-nav-item" style="display: none;"><a href="admin.html"><i class="fas fa-cog"></i> Admin</a></li>
+                </ul>
+            </nav>
+            <div class="user-actions">
+                <a href="login.html" id="login-btn" class="btn btn-outline"><i class="fas fa-sign-in-alt"></i> Connexion</a>
+                <a href="#" id="logout-btn" class="btn btn-outline" style="display:none;"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+                <div id="user-nav" style="display:none;">
+                    <span id="user-name"></span>
+                </div>
+            </div>
+            <div class="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay">
+        <button class="mobile-close" id="mobileClose">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="mobile-nav-content">
+            <ul>
+                <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
+                <li><a href="correction.html"><i class="fas fa-edit"></i> Correction</a></li>
+                <li><a href="suivi.html"><i class="fas fa-search"></i> Suivi</a></li>
+                <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li><a href="apropos.html"><i class="fas fa-info-circle"></i> À propos</a></li>
+                <li id="mobile-admin-nav-item" style="display: none;"><a href="admin.html"><i class="fas fa-cog"></i> Admin</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="padding-top: 100px; text-align: center;">
+        <h1>Test de Navigation</h1>
+        <p>Cette page teste le système de navigation conditionnelle.</p>
+        
+        <div style="margin: 20px; padding: 20px; background: #f0f0f0; border-radius: 8px;">
+            <h3>État actuel :</h3>
+            <p><strong>Token d'authentification :</strong> <span id="token-status">Vérification...</span></p>
+            <p><strong>Rôle utilisateur :</strong> <span id="role-status">Vérification...</span></p>
+            <p><strong>Nom utilisateur :</strong> <span id="name-status">Vérification...</span></p>
+        </div>
+        
+        <div style="margin: 20px;">
+            <button onclick="checkStatus()" style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Vérifier l'état</button>
+            <button onclick="simulateLogin()" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">Simuler connexion Admin</button>
+            <button onclick="simulateLogout()" style="background: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">Simuler déconnexion</button>
+        </div>
+    </div>
+
+    <script>
+        function checkStatus() {
+            const token = localStorage.getItem('auth_token');
+            const role = localStorage.getItem('user_role');
+            const name = localStorage.getItem('user_name');
+            
+            document.getElementById('token-status').textContent = token ? 'Présent' : 'Absent';
+            document.getElementById('role-status').textContent = role || 'Non défini';
+            document.getElementById('name-status').textContent = name || 'Non défini';
+            
+            console.log('État actuel:', { token, role, name });
+        }
+        
+        function simulateLogin() {
+            localStorage.setItem('auth_token', 'test-token-123');
+            localStorage.setItem('user_role', 'admin');
+            localStorage.setItem('user_name', 'Admin Test');
+            
+            // Trigger navigation update
+            updateNavigationVisibility();
+            checkStatus();
+        }
+        
+        function simulateLogout() {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user_role');
+            localStorage.removeItem('user_name');
+            
+            // Trigger navigation update
+            updateNavigationVisibility();
+            checkStatus();
+        }
+        
+        // Check status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkStatus();
+        });
+    </script>
+</body>
+</html>

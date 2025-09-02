@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tunisie Telecom - Plateforme de Réclamations</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <img src="images/logo.png" alt="Réclamation Telecom">
+                <h1>Réclamation Telecom</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html" class="active"><i class="fas fa-home"></i> Accueil</a></li>
+                    <li><a href="correction.html"><i class="fas fa-edit"></i> correction</a></li>
+                    <li><a href="suivi.html"><i class="fas fa-search"></i> Suivi</a></li>
+                    <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+                    <li><a href="apropos.html"><i class="fas fa-info-circle"></i> À propos</a></li>
+                    <li id="admin-nav-item" style="display: none;"><a href="admin.html"><i class="fas fa-cog"></i> Admin</a></li>
+                </ul>
+            </nav>
+            <div class="user-actions">
+                <a href="login.html" id="login-btn" class="btn btn-outline"><i class="fas fa-sign-in-alt"></i> Connexion</a>
+                <a href="#" id="logout-btn" class="btn btn-outline" style="display:none;"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+                <div id="user-nav" style="display:none;">
+                    <span id="user-name"></span>
+                </div>
+            </div>
+            <div class="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay">
+        <button class="mobile-close" id="mobileClose">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="mobile-nav-content">
+            <ul>
+                <li><a href="index.html" class="active"><i class="fas fa-home"></i> Accueil</a></li>
+                <li><a href="correction.html"><i class="fas fa-edit"></i> Correction</a></li>
+                <li><a href="suivi.html"><i class="fas fa-search"></i> Suivi</a></li>
+                <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li><a href="apropos.html"><i class="fas fa-info-circle"></i> À propos</a></li>
+                <li id="mobile-admin-nav-item" style="display: none;"><a href="admin.html"><i class="fas fa-cog"></i> Admin</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <section class="hero">
+        <div class="container hero-content">
+            <h1>Bienvenue sur la Plateforme de Réclamations de Tunisie Télécom</h1>
+            <p>Votre voix compte. Soumettez et suivez vos réclamations en toute simplicité et transparence.</p>
+            <a href="correction.html" class="btn btn-primary"><i class="fas fa-edit"></i> Soumettre une réclamation</a>
+        </div>
+    </section>
+
+    <section class="hero-section">
+        <div class="container">
+            <div class="text-center">
+                <h2>Nos Services</h2>
+                <p class="lead">Simplifiez la gestion de vos demandes.</p>
+            </div>
+            <div class="row services-grid">
+                <div class="col-md-4 service-item">
+                    <div class="service-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h4>Support Technique</h4>
+                    <p>Pour tout problème lié à vos services : internet, ligne fixe ou mobile.</p>
+                </div>
+                <div class="col-md-4 service-item">
+                    <div class="service-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <h4>Problèmes de Facturation</h4>
+                    <p>Pour une erreur sur votre facture ou une question sur votre consommation.</p>
+                </div>
+                <div class="col-md-4 service-item">
+                    <div class="service-icon">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <h4>Demandes d'Information</h4>
+                    <p>Pour obtenir des détails sur nos offres et nos services.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-col">
+                    <h3>À propos de nous</h3>
+                    <p>Tunisie Telecom, leader des télécommunications, s'engage à fournir des services de qualité supérieure.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Liens Rapides</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Accueil</a></li>
+                        <li><a href="correction.html">correction</a></li>
+                        <li><a href="suivi.html">Suivi</a></li>
+                        <li><a href="apropos.html">À propos</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-phone"></i> 78 224 533</a></li>
+                        <li><a href="#"><i class="fas fa-envelope"></i> contact@tunisietelecom.tn</a></li>
+                        <li><a href="#"><i class="fas fa-map-marker-alt"></i> Centre Urbain Nord, Tunis</a></li>
+                        <li><a href="#"><i class="fas fa-clock"></i> Lun-Ven: 8h-18h</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Réseaux sociaux</h3>
+                    <p>Suivez-nous sur les réseaux sociaux pour les dernières actualités</p>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/TunisieTelecom" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://x.com/_tunisietelecom?lang=fr" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.instagram.com/tunisietelecom" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/company/tunisie-t-l-com" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://www.youtube.com/@groupeTT" target="_blank"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 Tunisie Telecom. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script src="js/navigation.js"></script>
+</body>
+</html>
