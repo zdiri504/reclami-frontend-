@@ -386,11 +386,13 @@ function requireAuthHeaders() {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
   };
-  
-  if (currentUser && currentUser.token) {
+  // Always use token from localStorage if available
+  const token = localStorage.getItem('auth_token');
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  } else if (currentUser && currentUser.token) {
     headers['Authorization'] = `Bearer ${currentUser.token}`;
   }
-  
   return headers;
 }
 
@@ -462,6 +464,44 @@ function loadComplaints() {
   });
 }
 
+// Load complaints and dashboard stats on admin page load
+document.addEventListener('DOMContentLoaded', function() {
+  if (window.location.pathname.includes('admin.html')) {
+    loadDashboardStats();
+    loadComplaints();
+  }
+});
+
+// Load dashboard stats for admin
+function loadDashboardStats() {
+  fetch(`${API_BASE_URL}/admin/stats`, {
+    method: 'GET',
+    headers: requireAuthHeaders()
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Dashboard stats API response:', data); // Debug log
+    if (data.success && data.stats) {
+      document.getElementById('totalComplaints').textContent = data.stats.total || 0;
+      document.getElementById('newComplaints').textContent = data.stats.new || 0;
+      document.getElementById('inProgressComplaints').textContent = data.stats.in_progress || 0;
+      document.getElementById('resolvedComplaints').textContent = data.stats.resolved || 0;
+    } else {
+      document.getElementById('totalComplaints').textContent = '0';
+      document.getElementById('newComplaints').textContent = '0';
+      document.getElementById('inProgressComplaints').textContent = '0';
+      document.getElementById('resolvedComplaints').textContent = '0';
+    }
+  })
+  .catch(error => {
+    console.error('Error loading dashboard stats:', error);
+    document.getElementById('totalComplaints').textContent = '0';
+    document.getElementById('newComplaints').textContent = '0';
+    document.getElementById('inProgressComplaints').textContent = '0';
+    document.getElementById('resolvedComplaints').textContent = '0';
+  });
+}
+
 // Populate complaints table
 function populateComplaintsTable(complaints) {
   const tbody = document.querySelector('.complaints-table tbody');
@@ -498,13 +538,6 @@ function populateComplaintsTable(complaints) {
   // Add event listeners to buttons
   attachComplaintButtonsEvents();
 }
-
-// Load complaints on page load
-document.addEventListener('DOMContentLoaded', function() {
-  if (window.location.pathname.includes('admin.html')) {
-    loadComplaints();
-  }
-});
 
 // Add event listeners to filter dropdowns
 document.querySelectorAll('.filters select').forEach(select => {
