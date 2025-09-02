@@ -472,6 +472,51 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
+// Client-side debounce helper (shared)
+function debounce(fn, delay) {
+  let timer = null;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+// Client-side filtering of complaints already fetched into currentComplaints
+function filterDisplayedComplaints(query) {
+  const qRaw = (query || '').trim();
+  const q = qRaw.toLowerCase();
+  // If no query, display all
+  if (!q) {
+    displayComplaints(currentComplaints);
+    return;
+  }
+
+  const filtered = currentComplaints.filter(c => {
+    const reference = (c.reference_id || c.reference || '').toString().toLowerCase();
+    const subject = (c.subject || '').toString().toLowerCase();
+    const name = (c.user && c.user.name ? c.user.name : '').toString().toLowerCase();
+    const type = (c.type || '').toString().toLowerCase();
+    // If user typed only digits like "1001", match references containing those digits
+    const digitsQuery = qRaw.replace(/\D/g, '');
+    const referenceDigits = reference.replace(/\D/g, '');
+    const numericMatch = digitsQuery && referenceDigits.includes(digitsQuery);
+    return reference.includes(q) || numericMatch || subject.includes(q) || name.includes(q) || type.includes(q);
+  });
+
+  console.debug('filterDisplayedComplaints', { query: qRaw, total: currentComplaints.length, filtered: filtered.length });
+  displayComplaints(filtered);
+}
+
+// Wire admin search input for client-side filtering (if present)
+document.addEventListener('DOMContentLoaded', function() {
+  if (!window.location.pathname.includes('admin.html')) return;
+  const searchInput = document.getElementById('searchInput');
+  if (!searchInput) return;
+  searchInput.addEventListener('input', debounce(function() {
+    filterDisplayedComplaints(this.value);
+  }, 200));
+});
+
 // Load dashboard stats for admin
 function loadDashboardStats() {
   fetch(`${API_BASE_URL}/admin/stats`, {
